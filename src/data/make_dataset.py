@@ -34,21 +34,29 @@ def read_strains_from(data_files, data_path='./data/raw/'):
   return raw_strains
 
 
-def train_test_split_strains(strains_by_year, test_split):
+def train_test_split_strains(strains_by_year, test_split, cluster):
   """
   Shuffles the strains in each year and splits them into two disjoint sets,
   of size indicated by the test_split.
   Expects and returns pandas dataframe or series.
   """
   train_strains, test_strains = [], []
-  for strains in strains_by_year:
-    num_of_training_examples = int(math.floor(strains.count() * (1 - test_split)))
-    shuffled_strains = strains.sample(frac=1).reset_index(drop=True)
-    train = shuffled_strains.iloc[:num_of_training_examples].reset_index(drop=True)
-    test = shuffled_strains.iloc[num_of_training_examples:].reset_index(drop=True)
-    train_strains.append(train)
-    test_strains.append(test)
-  
+  if cluster == 'random':
+      for strains in strains_by_year:
+          num_of_training_examples = int(math.floor(strains.count() * (1 - test_split)))
+          shuffled_strains = strains.sample(frac=1).reset_index(drop=True)
+          train = shuffled_strains.iloc[:num_of_training_examples].reset_index(drop=True)
+          test = shuffled_strains.iloc[num_of_training_examples:].reset_index(drop=True)
+          train_strains.append(train)
+          test_strains.append(test)
+  else:
+      #change the starting index for the time-series training samples for multiple experiments
+      for strains in strains_by_year:
+          num_of_training_examples = int(math.floor(strains.count() * (1 - test_split)))
+          train = strains.iloc[:800].reset_index(drop=True)
+          test = strains.iloc[800:1000].reset_index(drop=True)
+          train_strains.append(train)
+          test_strains.append(test)
   return train_strains, test_strains
 
 

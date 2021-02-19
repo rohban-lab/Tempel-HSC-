@@ -19,6 +19,20 @@ def sample_strains(strains_by_year, num_of_samples):
   return sampled_strains_by_year
 
 
+def sample_strains_cluster(strains_by_year, num_of_samples):
+  """
+  Picks num_of_samples strains from each year after clustering
+  sampling is done with replacement.
+  Returns a 2d list of strings.
+  """
+  sampled_strains_by_year = []
+  #i = random.randint(0, 100)
+  for year_strains in strains_by_year:
+    sampled_strains_by_year.append(year_strains[:num_of_samples])
+
+  return sampled_strains_by_year
+
+
 def split_to_trigrams(strains_by_year, overlapping=True):
   """
   Splits the strains into trigrams, by default overlapping.
@@ -98,7 +112,6 @@ def make_triplet_labels(triplet_strains_by_year):
 
   labels = []
   for i in range(num_of_triplets):
-    print(i, triplet_strains_by_year[-1][i][epitope_position], triplet_strains_by_year[-2][i][epitope_position])
     if triplet_strains_by_year[-1][i][epitope_position] == triplet_strains_by_year[-2][i][epitope_position]:
       labels.append(0)
     else:
