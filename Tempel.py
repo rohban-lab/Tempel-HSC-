@@ -55,7 +55,7 @@ if __name__ == '__main__':
     if args.create_dataset:
         for i in range(dataset_features['num_of_runs']):
             create_dataset(dataset_features['start_year'], dataset_features['end_year'], dataset_features['dataset'],
-                           i + 1, method=dataset_features['cluster'])
+                           i + 1, method=dataset_features['method'])
     if args.train:
         res_path = './results/Tempel/{}_T{}_{}'.format(dataset_features['dataset'],
                                                        dataset_features['end_year'] -
