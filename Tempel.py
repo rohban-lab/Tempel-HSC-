@@ -58,24 +58,29 @@ if __name__ == '__main__':
                            i + 1, method=dataset_features['cluster'])
     if args.train:
         res_path = './results/Tempel/{}_T{}_{}'.format(dataset_features['dataset'],
-                                                dataset_features['end_year'] -
-                                                dataset_features['start_year'],
-                                                dataset_features['end_year'])
+                                                       dataset_features['end_year'] -
+                                                       dataset_features['start_year'],
+                                                       dataset_features['end_year'])
 
         if not os.path.exists(res_path):
             os.mkdir(res_path)
         final_res = {}
         for i in range(5):
             parameters['data_set'] = './data/processed/{}_T{}_{}/{}/triplet_cluster'.format(dataset_features['dataset'],
-                                                                                            dataset_features['end_year'] -
-                                                                                            dataset_features['start_year'],
-                                                                                            dataset_features['end_year'],
+                                                                                            dataset_features[
+                                                                                                'end_year'] -
+                                                                                            dataset_features[
+                                                                                                'start_year'],
+                                                                                            dataset_features[
+                                                                                                'end_year'],
                                                                                             i + 1)
             torch.manual_seed(1)
             np.random.seed(1)
 
-            train_trigram_vecs, train_labels = utils.read_dataset(dataset_features['dataset'], parameters['data_set'] + '_train.csv', concat=False)
-            test_trigram_vecs, test_labels = utils.read_dataset(dataset_features['dataset'], parameters['data_set'] + '_test.csv', concat=False)
+            train_trigram_vecs, train_labels = utils.read_dataset(dataset_features['dataset'],
+                                                                  parameters['data_set'] + '_train.csv', concat=False)
+            test_trigram_vecs, test_labels = utils.read_dataset(dataset_features['dataset'],
+                                                                parameters['data_set'] + '_test.csv', concat=False)
 
             X_train = torch.tensor(train_trigram_vecs, dtype=torch.float32)
             Y_train = torch.tensor(train_labels, dtype=torch.int64)
@@ -89,8 +94,10 @@ if __name__ == '__main__':
             net = models.AttentionModel(seq_length, input_dim, output_dim, parameters['hidden_size'],
                                         parameters['dropout_p'])
 
-            result = train_model.train_rnn(net, False, parameters['num_of_epochs'], parameters['learning_rate'],
-                                           parameters['batch_size'], X_train, Y_train, X_test, Y_test, False)
+            result, (fpr_rnn, tpr_rnn) = train_model.train_rnn(net, False, parameters['num_of_epochs'],
+                                                               parameters['learning_rate'],
+                                                               parameters['batch_size'], X_train, Y_train, X_test,
+                                                               Y_test, False)
             print('Finished')
             df = pd.DataFrame.from_dict(result)
             df.to_csv(res_path + '/{}.csv'.format(i))
@@ -101,3 +108,6 @@ if __name__ == '__main__':
 
         df = pd.DataFrame.from_dict(final_res)
         df.to_csv(res_path + '/final.csv')
+
+        np.save(res_path + '/fpr', fpr_rnn)
+        np.save(res_path + '/tpr', tpr_rnn)

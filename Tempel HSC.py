@@ -7,6 +7,7 @@ from src.scripts.create_dataset import create_dataset
 from loader import load_datasets
 import os
 import pandas as pd
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='H5N1')
@@ -109,7 +110,10 @@ if __name__ == '__main__':
             for k, v in classifier.scores['test'].items():
                 final_res['var'][k] = (i * (final_res['mean'][k] - sum(v) / len(v)) ** 2 + final_res['var'][k]) / (
                         i + 1)
-            df = pd.DataFrame.from_dict(classifier.roc_info)
-            df.to_csv(res_path + '/{}_roc.csv'.format(i + 1))
+
         df = pd.DataFrame.from_dict(final_res)
         df.to_csv(res_path + '/final.csv')
+
+        np.save(res_path + '/fpr', classifier.roc_info['fpr'])
+        np.save(res_path + '/tpr', classifier.roc_info['tpr'])
+        np.save(res_path + '/thresh', classifier.roc_info['thresh'])

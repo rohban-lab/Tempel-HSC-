@@ -212,9 +212,8 @@ def train_rnn(model, verify, epochs, learning_rate, batch_size, X, Y, X_test, Y_
                 fpr_rnn, tpr_rnn, _ = roc_curve(Y_test, pred_prob)
                 test_auc = auc(fpr_rnn, tpr_rnn)
                 res = {'precision': [precision], 'recall': [recall], 'fscore': [fscore],
-                       'mcc': [mcc], 'val_acc': [val_acc], 'test_auc': [test_auc],
-                       'roc_info': {'fpr': [tpr_rnn], 'tpr': [fpr_rnn]}}
-                return res
+                       'mcc': [mcc], 'val_acc': [val_acc], 'test_auc': [test_auc]}
+                return res, (fpr_rnn, tpr_rnn)
 
     #    if (epoch + 1) % print_interval == 0:
     #      print(' Epoch %d\tTime %s\tT_loss %.3f\tT_acc  %.3f\tV_loss %.3f\tV_acc  %.3f\tPrecis %.3f\tRecall %.3f\tFscore %.3f\tMCC    %.3f'

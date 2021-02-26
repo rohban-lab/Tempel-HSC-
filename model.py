@@ -19,7 +19,7 @@ class Classifier:
         self.eps = eps
         self.scores = {'test': {'precision': [], 'recall': [], 'f-score': [], 'mcc': [], 'accuracy': [], 'auc': []},
                        'valid': {'precision': [], 'recall': [], 'f-score': [], 'mcc': [], 'accuracy': [], 'auc': []}}
-        self.roc_info = {'fpr': [], 'tpr': [], 'thresh': []}
+        self.roc_info = {}
 
     def record_results(self, precision, recall, fscore, mcc, acc, auc, roc, dataset):
         self.scores[dataset]['precision'].append(precision)
@@ -29,9 +29,9 @@ class Classifier:
         self.scores[dataset]['accuracy'].append(acc)
         self.scores[dataset]['auc'].append(auc)
         if dataset == 'test':
-            self.roc_info['fpr'].append(roc[0])
-            self.roc_info['tpr'].append(roc[1])
-            self.roc_info['thresh'].append(roc[2])
+            self.roc_info['fpr'] = roc[0]
+            self.roc_info['tpr'] = roc[1]
+            self.roc_info['thresh'] = roc[2]
 
     def test(self, test_loader, net):
 
