@@ -24,7 +24,7 @@ parameters = {
   'learning_rate': 0.001,
 
   # Size of mini batch
-  'batch_size': 512,
+  'batch_size': 256,
 
   # Number of training iterations
   'num_of_epochs': 50

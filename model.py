@@ -41,7 +41,7 @@ class Classifier:
                 inputs, labels, semi_targets, idx = data
                 inputs = inputs.permute(1, 0, 2)
 
-                outputs, _ = net(inputs.float(), net.init_hidden(inputs.shape[1]))
+                _, outputs = net(inputs.float(), net.init_hidden(inputs.shape[1]))
 
                 dists = torch.sqrt(torch.norm(outputs, p=2, dim=1) ** 2 + 1) - 1
 

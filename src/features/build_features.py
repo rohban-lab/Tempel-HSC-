@@ -7,7 +7,7 @@ from src.utils import validation
 
 def sample_strains(strains_by_year, num_of_samples):
   """
-  Randomly picks num_of_samples strains from each year, 
+  Randomly picks num_of_samples strains from each year,
   sampling is done with replacement.
   Returns a 2d list of strings.
   """
@@ -17,7 +17,6 @@ def sample_strains(strains_by_year, num_of_samples):
     sampled_strains_by_year.append(random.choices(year_strains, k=num_of_samples))
 
   return sampled_strains_by_year
-
 
 def sample_strains_cluster(strains_by_year, num_of_samples):
   """
@@ -68,7 +67,7 @@ def split_to_trigrams(strains_by_year, overlapping=True):
         strain_trigrams.append(trigram)
 
       year_trigrams.append(strain_trigrams)
-    
+
     trigrams_by_year.append(year_trigrams)
 
   return trigrams_by_year
@@ -103,7 +102,7 @@ def make_triplet_strains(strains_by_year, positions):
 
 def make_triplet_labels(triplet_strains_by_year):
   """
-  Creates labels indicating whether the center amino acid in each triplet 
+  Creates labels indicating whether the center amino acid in each triplet
   mutates in the last year (1 for yes, 0 for no).
   Expects a 2d [year, triplet] list of strings and returns a list of ints.
   """
@@ -221,13 +220,12 @@ def replace_uncertain_amino_acids(amino_acids):
 
   return amino_acids
 
-
 def map_trigrams_to_idxs(nested_trigram_list, trigram_to_idx):
   """
   Takes a nested list containing Trigram objects and maps them to their index.
   """
   dummy_idx = len(trigram_to_idx)
-  
+
   def mapping(trigram):
     if isinstance(trigram, Trigram):
       trigram.amino_acids = replace_uncertain_amino_acids(trigram.amino_acids)
@@ -239,10 +237,10 @@ def map_trigrams_to_idxs(nested_trigram_list, trigram_to_idx):
 
     elif isinstance(trigram, list):
       return list(map(mapping, trigram))
-      
+
     else:
       raise TypeError('Expected nested list of Trigrams, but encountered {} in recursion.'.format(type(trigram)))
-   
+
   return list(map(mapping, nested_trigram_list))
 
 
@@ -250,8 +248,11 @@ def map_idxs_to_vecs(nested_idx_list, idx_to_vec):
   """
   Takes a nested list of indexes and maps them to their trigram vec (np array).
   """
-  dummy_vec = np.array([0] * idx_to_vec.shape[1])
-  
+  #represent the 3-grams containing '-' by zero vector in ProVect
+  #dummy_vec = np.array([0] * idx_to_vec.shape[1])
+
+  #represent the 3-grams containing '-' by 'unknown' vector in ProVect
+  dummy_vec = idx_to_vec[idx_to_vec.shape[0]-1]
   def mapping(idx):
     if isinstance(idx, int):
       if idx < idx_to_vec.shape[0]:
@@ -261,7 +262,7 @@ def map_idxs_to_vecs(nested_idx_list, idx_to_vec):
 
     elif isinstance(idx, list):
       return list(map(mapping, idx))
-      
+
     else:
       raise TypeError('Expected nested list of ints, but encountered {} in recursion.'.format(type(idx)))
 
@@ -291,7 +292,7 @@ def indexes_to_mutations(trigram_indexes_x, trigram_indexes_y):
   for i in range(len(trigram_indexes_x)):
     if trigram_indexes_x[i] != trigram_indexes_y[i]:
         mutations[i] = 1
-  
+
   return mutations
 
 def reshape_to_linear(vecs_by_year, window_size=3):
@@ -300,6 +301,5 @@ def reshape_to_linear(vecs_by_year, window_size=3):
   for year_vecs in vecs_by_year[-window_size:]:
     for i, vec in enumerate(year_vecs):
       reshaped[i] = reshaped[i] + vec.tolist()
-        
+
   return reshaped
-      

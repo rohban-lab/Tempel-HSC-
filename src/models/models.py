@@ -5,10 +5,10 @@ from torch import nn
 
 class RnnModel(nn.Module):
     """
-  An RNN model using either LSTM or GRU cells.
-  """
+    An RNN model using either RNN, LSTM or GRU cells.
+    """
 
-    def __init__(self, input_dim, output_dim, hidden_size, dropout_p, cell_type='LSTM'):
+    def __init__(self, input_dim, output_dim, hidden_size, dropout_p, cell_type):
         super(RnnModel, self).__init__()
 
         self.output_dim = output_dim
@@ -21,6 +21,8 @@ class RnnModel(nn.Module):
             self.encoder = nn.LSTM(input_dim, hidden_size)
         elif cell_type == 'GRU':
             self.encoder = nn.GRU(input_dim, hidden_size)
+        elif cell_type == 'RNN':
+            self.encoder = nn.RNN(input_dim, hidden_size)
 
         self.out = nn.Linear(hidden_size, output_dim)
 
@@ -29,8 +31,7 @@ class RnnModel(nn.Module):
         encoder_outputs, _ = self.encoder(input_seq, hidden_state)
         score_seq = self.out(encoder_outputs[-1, :, :])
 
-        dummy_attn_weights = torch.zeros(input_seq.shape[1], input_seq.shape[0])
-        return score_seq, dummy_attn_weights  # No attention weights
+        return score_seq, encoder_outputs[-1, :, :]  # No attention weights
 
     def init_hidden(self, batch_size):
         if self.cell_type == 'LSTM':
@@ -39,28 +40,34 @@ class RnnModel(nn.Module):
             return (h_init, c_init)
         elif self.cell_type == 'GRU':
             return torch.zeros(1, batch_size, self.hidden_size)
+        elif self.cell_type == 'RNN':
+            return torch.zeros(1, batch_size, self.hidden_size)
 
 
 class AttentionModel(nn.Module):
     """
-  A temporal attention model using an LSTM encoder.
-  """
+    A temporal attention model using an LSTM encoder.
+    """
 
-    def __init__(self, seq_length, input_dim, hidden_size, dropout_p):
+    def __init__(self, seq_length, input_dim, output_dim, hidden_size, dropout_p):
         super(AttentionModel, self).__init__()
 
         self.hidden_size = hidden_size
         self.seq_length = seq_length
+        self.output_dim = output_dim
+
         self.encoder = nn.LSTM(input_dim, hidden_size)
         self.attn = nn.Linear(hidden_size, seq_length)
         self.dropout = nn.Dropout(dropout_p)
+        self.out = nn.Linear(hidden_size, output_dim)
 
     def forward(self, input_seq, hidden_state):
         input_seq = self.dropout(input_seq)
         encoder_outputs, (h, _) = self.encoder(input_seq, hidden_state)
         attn_applied, attn_weights = self.attention(encoder_outputs, h)
+        score_seq = self.out(attn_applied.reshape(-1, self.hidden_size))
 
-        return attn_applied.reshape(-1, self.hidden_size), attn_weights
+        return score_seq, attn_applied.reshape(-1, self.hidden_size)
 
     def attention(self, encoder_outputs, hidden):
         attn_weights = F.softmax(torch.squeeze(self.attn(hidden)), dim=1)
@@ -79,9 +86,9 @@ class AttentionModel(nn.Module):
 
 class DaRnnModel(nn.Module):
     """
-  A Dual-Attention RNN model, attending over both the input at each timestep
-  and all hidden states of the encoder to make the final prediction.
-  """
+    A Dual-Attention RNN model, attending over both the input at each timestep
+    and all hidden states of the encoder to make the final prediction.
+    """
 
     def __init__(self, seq_length, input_dim, output_dim, hidden_size, dropout_p):
         super(DaRnnModel, self).__init__()
