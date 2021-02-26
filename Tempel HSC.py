@@ -109,5 +109,7 @@ if __name__ == '__main__':
             for k, v in classifier.scores['test'].items():
                 final_res['var'][k] = (i * (final_res['mean'][k] - sum(v) / len(v)) ** 2 + final_res['var'][k]) / (
                         i + 1)
+            df = pd.DataFrame.from_dict(classifier.roc_info)
+            df.to_csv(res_path + '/{}_roc.csv'.format(i + 1))
         df = pd.DataFrame.from_dict(final_res)
         df.to_csv(res_path + '/final.csv')

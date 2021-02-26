@@ -19,14 +19,19 @@ class Classifier:
         self.eps = eps
         self.scores = {'test': {'precision': [], 'recall': [], 'f-score': [], 'mcc': [], 'accuracy': [], 'auc': []},
                        'valid': {'precision': [], 'recall': [], 'f-score': [], 'mcc': [], 'accuracy': [], 'auc': []}}
+        self.roc_info = {'fpr': [], 'tpr': [], 'thresh': []}
 
-    def record_results(self, precision, recall, fscore, mcc, acc, auc, dataset):
+    def record_results(self, precision, recall, fscore, mcc, acc, auc, roc, dataset):
         self.scores[dataset]['precision'].append(precision)
         self.scores[dataset]['recall'].append(recall)
         self.scores[dataset]['f-score'].append(fscore)
         self.scores[dataset]['mcc'].append(mcc)
         self.scores[dataset]['accuracy'].append(acc)
         self.scores[dataset]['auc'].append(auc)
+        if dataset == 'test':
+            self.roc_info['fpr'].append(roc[0])
+            self.roc_info['tpr'].append(roc[1])
+            self.roc_info['thresh'].append(roc[2])
 
     def test(self, test_loader, net):
 
@@ -63,10 +68,10 @@ class Classifier:
         fpr, tpr, thresholds = roc_curve(labels, scores)
         test_auc = auc(fpr, tpr)
 
-        return fpr, tpr, thresholds, scores, labels, test_auc
+        return fpr, tpr, thresholds, scores, labels, test_auc, (fpr, tpr, thresholds)
 
     def eval(self, test_loader, net, thresh=-1):
-        fpr, tpr, thresholds, scores, labels, test_auc = self.test(test_loader, net)
+        fpr, tpr, thresholds, scores, labels, test_auc, roc = self.test(test_loader, net)
         tops = [0, 0]
 
         if thresh == -1:
@@ -81,7 +86,7 @@ class Classifier:
             preds = scores > thresh
 
         precision, recall, fscore, mcc, val_acc = validation.evaluate(labels, preds)
-        self.record_results(precision, recall, fscore, mcc, val_acc, test_auc, 'valid' if thresh == -1 else 'test')
+        self.record_results(precision, recall, fscore, mcc, val_acc, test_auc, roc, 'valid' if thresh == -1 else 'test')
 
         return tops[1]
 

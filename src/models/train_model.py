@@ -209,10 +209,11 @@ def train_rnn(model, verify, epochs, learning_rate, batch_size, X, Y, X_test, Y_
 
                 precision, recall, fscore, mcc, val_acc = validation.evaluate(Y_test, predictions)
                 pred_prob = calculate_prob(test_scores)
-                tpr_rnn, fpr_rnn, _ = roc_curve(Y_test, pred_prob)
+                fpr_rnn, tpr_rnn, _ = roc_curve(Y_test, pred_prob)
                 test_auc = auc(fpr_rnn, tpr_rnn)
                 res = {'precision': [precision], 'recall': [recall], 'fscore': [fscore],
-                       'mcc': [mcc], 'val_acc': [val_acc], 'test_auc': [test_auc]}
+                       'mcc': [mcc], 'val_acc': [val_acc], 'test_auc': [test_auc],
+                       'roc_info': {'fpr': [tpr_rnn], 'tpr': [fpr_rnn]}}
                 return res
 
     #    if (epoch + 1) % print_interval == 0:
