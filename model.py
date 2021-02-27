@@ -20,6 +20,7 @@ class Classifier:
         self.scores = {'test': {'precision': [], 'recall': [], 'f-score': [], 'mcc': [], 'accuracy': [], 'auc': []},
                        'valid': {'precision': [], 'recall': [], 'f-score': [], 'mcc': [], 'accuracy': [], 'auc': []}}
         self.roc_info = {}
+        self.thresh_scores = {}
 
     def record_results(self, precision, recall, fscore, mcc, acc, auc, roc, dataset):
         self.scores[dataset]['precision'].append(precision)
@@ -75,12 +76,24 @@ class Classifier:
         tops = [0, 0]
 
         if thresh == -1:
+
+            self.thresh_scores['precision'] = []
+            self.thresh_scores['recall'] = []
+            self.thresh_scores['f-score'] = []
+            self.thresh_scores['thresh'] = thresholds
+
             for th in thresholds:
                 preds = scores > th
-                _, _, fscore, _, _ = validation.evaluate(labels, preds)
+                precision, recall, fscore, _, _ = validation.evaluate(labels, preds)
+
+                self.thresh_scores['precision'].append(precision)
+                self.thresh_scores['recall'].append(recall)
+                self.thresh_scores['f-score'].append(fscore)
+
                 if fscore > tops[0]:
                     tops[0] = fscore
                     tops[1] = th
+
             preds = scores > tops[1]
         else:
             preds = scores > thresh

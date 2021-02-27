@@ -5,6 +5,7 @@ from src.models.models import AttentionModel
 from src.models.models import RnnModel
 from src.scripts.create_dataset import create_dataset
 from loader import load_datasets
+import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import numpy as np
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     if args.create_dataset:
         for i in range(dataset_features['num_of_runs']):
             create_dataset(dataset_features['start_year'], dataset_features['end_year'], dataset_features['dataset'],
-                           i + 1, method=dataset_features['cluster'])
+                           i + 1, method=dataset_features['method'])
     if args.train:
         res_path = PATHS['result'].format(dataset_features['dataset'],
                                           dataset_features['end_year'] -
@@ -117,3 +118,9 @@ if __name__ == '__main__':
         np.save(res_path + '/fpr', classifier.roc_info['fpr'])
         np.save(res_path + '/tpr', classifier.roc_info['tpr'])
         np.save(res_path + '/thresh', classifier.roc_info['thresh'])
+
+        plt.plot(classifier.thresh_scores['precision'], classifier.thresh_scores['thresh'])
+        plt.plot(classifier.thresh_scores['recall'], classifier.thresh_scores['thresh'])
+        plt.savefig(res_path + 'prec_rec.png')
+        plt.plot(classifier.thresh_scores['fscore'], classifier.thresh_scores['thresh'])
+        plt.savefig(res_path + 'fscore.png')
