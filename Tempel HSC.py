@@ -121,6 +121,5 @@ if __name__ == '__main__':
 
         plt.plot(classifier.thresh_scores['precision'], classifier.thresh_scores['thresh'])
         plt.plot(classifier.thresh_scores['recall'], classifier.thresh_scores['thresh'])
-        plt.savefig(res_path + 'prec_rec.png')
         plt.plot(classifier.thresh_scores['fscore'], classifier.thresh_scores['thresh'])
-        plt.savefig(res_path + 'fscore.png')
+        plt.savefig(res_path + 'scores_plot.png')

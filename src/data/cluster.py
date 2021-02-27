@@ -122,7 +122,7 @@ def cluster_raw(strains_by_year, method='dbscan'):
         min_samples = math.floor(len(year_strains) * 0.05)
         if (method == 'dbscan'):
             for j, y in enumerate(year_strains):
-                if (y.shape[0] > 568):
+                if y.shape[0] > 568:
                     year_strains[j] = y[:568, ]
 
             clf = DBSCAN(eps=0.07, min_samples=min_samples, metric='hamming').fit(year_strains)
