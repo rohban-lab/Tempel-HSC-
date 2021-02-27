@@ -13,7 +13,7 @@ parser.add_argument('--start_year', type=int, default=2001)
 parser.add_argument('--end_year', type=int, default=2016)
 parser.add_argument('--create_dataset', type=bool, default=False)
 parser.add_argument('--train', type=bool, default=True)
-parser.add_argument('--method', type=str, default='cluster')
+parser.add_argument('--method', type=str, default='dbscan')
 args = parser.parse_args()
 
 parameters = {
