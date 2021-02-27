@@ -9,7 +9,7 @@ import os
 def create_dataset(start_year, end_year, dataset, num, method='cluster'):
     parameters = {
         # Relative file path to raw data sets (should be named year.csv and also contain trigram vec file)
-        'data_path': './data/raw/{}/'.format(dataset),
+        'data_path': './data/raw/{}_cluster/'.format(dataset),
 
         # Year to start from
         'start_year': start_year,
