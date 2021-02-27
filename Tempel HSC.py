@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
             seq_length = dataset_features['end_year'] - dataset_features['start_year']
             if parameters['model'] == 'attention':
-                net = AttentionModel(seq_length, parameters['input_dim'], parameters['hidden_size']
+                net = AttentionModel(seq_length, parameters['input_dim'], 2, parameters['hidden_size']
                                      , parameters['dropout_p']).float()
             elif parameters['model'] == 'LSTM':
                 net = RnnModel(parameters['input_dim'], parameters['hidden_size'], parameters['dropout_p'],
