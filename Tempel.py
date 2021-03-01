@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='H5N1')
 parser.add_argument('--start_year', type=int, default=2001)
 parser.add_argument('--end_year', type=int, default=2016)
-parser.add_argument('--create_dataset', type=bool, default=False)
+parser.add_argument('--create_dataset', type=bool, default=True)
 parser.add_argument('--train', type=bool, default=True)
 parser.add_argument('--method', type=str, default='dbscan')
 args = parser.parse_args()
@@ -51,7 +51,8 @@ dataset_features = {
     'method': args.method
 }
 
-if __name__ == '__main__':
+
+def main():
     if args.create_dataset:
         for i in range(dataset_features['num_of_runs']):
             create_dataset(dataset_features['start_year'], dataset_features['end_year'], dataset_features['dataset'],
@@ -67,11 +68,11 @@ if __name__ == '__main__':
         final_res = {}
         for i in range(5):
             parameters['data_set'] = './data/processed/{}_T{}_{}/{}/triplet_{}'.format(dataset_features['dataset'],
-                                                                                        dataset_features['end_year'] -
-                                                                                        dataset_features['start_year'],
-                                                                                        dataset_features['end_year'],
-                                                                                        i + 1,
-                                                                                        dataset_features['method'])
+                                                                                       dataset_features['end_year'] -
+                                                                                       dataset_features['start_year'],
+                                                                                       dataset_features['end_year'],
+                                                                                       i + 1,
+                                                                                       dataset_features['method'])
             torch.manual_seed(1)
             np.random.seed(1)
 
@@ -109,3 +110,18 @@ if __name__ == '__main__':
 
         np.save(res_path + '/fpr', fpr_rnn)
         np.save(res_path + '/tpr', tpr_rnn)
+
+
+if __name__ == '__main__':
+    datasets = ['H1N1', 'H3N2', 'H5N1']
+    start_years = [2000, 2005, 2010]
+    for ds in datasets:
+        for sy in start_years:
+            dataset_features['dataset'] = ds
+            dataset_features['start_year'] = sy
+            if ds == 'H5N1' and sy == 2000:
+                dataset_features['start_year'] = 2001
+            try:
+                main()
+            except:
+                print('Error at {} {}'.format(ds, sy))
