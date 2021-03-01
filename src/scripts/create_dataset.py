@@ -6,7 +6,7 @@ from src.data import cluster
 import os
 
 
-def create_dataset(start_year, end_year, dataset, num, method='cluster'):
+def create_dataset(start_year, end_year, dataset, num, method='cluster', time_div=False):
     parameters = {
         # Relative file path to raw data sets (should be named year.csv and also contain trigram vec file)
         'data_path': './data/raw/{}_cluster/'.format(dataset),
@@ -91,8 +91,16 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster'):
     trigram_to_idx, _ = make_dataset.read_trigram_vecs(parameters['data_path'])
 
     strains_by_year = make_dataset.read_strains_from(data_files, parameters['data_path'])
-    train_strains_by_year, test_strains_by_year = make_dataset.train_test_split_strains(strains_by_year, test_split,
-                                                                                        parameters['clustering_method'])
+
+    if not time_div:
+        train_strains_by_year, test_strains_by_year = make_dataset.train_test_split_strains(strains_by_year, test_split,
+                                                                                            parameters[
+                                                                                                'clustering_method'])
+    else:
+        train_strains_by_year, _ = make_dataset.train_test_split_strains(strains_by_year[:-1], test_split,
+                                                                         parameters['clustering_method'])
+        _, test_strains_by_year = make_dataset.train_test_split_strains(strains_by_year[1:], test_split,
+                                                                        parameters['clustering_method'])
 
     if parameters['clustering_method'] != 'random':
         if parameters['clustering_method'] == 'cluster':
