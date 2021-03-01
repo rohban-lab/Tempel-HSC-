@@ -66,14 +66,12 @@ if __name__ == '__main__':
             os.mkdir(res_path)
         final_res = {}
         for i in range(5):
-            parameters['data_set'] = './data/processed/{}_T{}_{}/{}/triplet_cluster'.format(dataset_features['dataset'],
-                                                                                            dataset_features[
-                                                                                                'end_year'] -
-                                                                                            dataset_features[
-                                                                                                'start_year'],
-                                                                                            dataset_features[
-                                                                                                'end_year'],
-                                                                                            i + 1)
+            parameters['data_set'] = './data/processed/{}_T{}_{}/{}/triplet_{}'.format(dataset_features['dataset'],
+                                                                                        dataset_features['end_year'] -
+                                                                                        dataset_features['start_year'],
+                                                                                        dataset_features['end_year'],
+                                                                                        i + 1,
+                                                                                        dataset_features['method'])
             torch.manual_seed(1)
             np.random.seed(1)
 

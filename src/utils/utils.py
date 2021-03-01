@@ -20,7 +20,7 @@ def read_and_process_to_trigram_vecs(data_files, data_path='../data/raw/', sampl
 
   if test_samples > 0:
     test_strains_by_year = build_features.sample_strains(test_strains_by_year, test_samples)
-  
+
   train_trigram_vecs, train_trigram_idxs = process_years(train_strains_by_year, data_path, squeeze, extract_epitopes)
   test_trigram_vecs, test_trigram_idxs = process_years(test_strains_by_year, data_path, squeeze, extract_epitopes)
 
@@ -68,7 +68,7 @@ def read_dataset(dataset, path, limit=0, concat=False):
   If concat is true each of the trigrams in a year is concatenated, if false
   they are instead summed elementwise.
   """
-  _, trigram_vecs_data = make_dataset.read_trigram_vecs('./data/raw/{}/'.format(dataset))
+  _, trigram_vecs_data = make_dataset.read_trigram_vecs('./data/raw/{}_cluster/'.format(dataset))
 
   df = pd.read_csv(path)
 
@@ -102,7 +102,7 @@ def get_time_string(time):
     time_string += '  '
   elif mins < 100:
     time_string += ' '
-  
+
   time_string += '%dm ' % mins
 
   if secs < 10:
