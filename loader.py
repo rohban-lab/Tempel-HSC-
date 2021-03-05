@@ -20,8 +20,8 @@ class SeqDataset(Dataset):
         return self.data.shape[1]
 
 
-def load_datasets(dataset, train_path, test_path):
-    train_data, train_labels = utils.read_dataset(dataset, train_path, concat=False)
+def load_datasets(dataset, train_path, test_path, all_years_label=False):
+    train_data, train_labels = utils.read_dataset(dataset, train_path, concat=False, all_years_label=all_years_label)
 
     length = int(train_data.shape[1] / 10)
     valid_data = train_data[:, 0:length, :]
@@ -29,7 +29,7 @@ def load_datasets(dataset, train_path, test_path):
     train_data = train_data[:, length:, :]
     train_labels = train_labels[length:]
 
-    test_data, test_labels = utils.read_dataset(dataset, test_path, concat=False)
+    test_data, test_labels = utils.read_dataset(dataset, test_path, concat=False, all_years_label=all_years_label)
 
     # length = int(test_data.shape[1]/10)
     # valid_data = test_data[:,0:length,:]

@@ -42,7 +42,7 @@ parameters = {
 dataset_features = {
     'dataset': args.dataset,
 
-    'num_of_datasets': 5,
+    'num_of_runs': 5,
 
     'start_year': args.start_year,
 

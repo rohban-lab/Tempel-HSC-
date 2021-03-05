@@ -40,7 +40,7 @@ parameters = {
 dataset_features = {
     'dataset': args.dataset,
 
-    'num_of_datasets': 5,
+    'num_of_runs': 5,
 
     'start_year': args.start_year,
 
@@ -131,14 +131,16 @@ def main():
 
 if __name__ == '__main__':
     datasets = ['H1N1', 'H3N2', 'H5N1']
-    start_years = [2000, 2005, 2010]
+    start_years = [2000, 2000, 2010]
     for ds in datasets:
         for sy in start_years:
             dataset_features['dataset'] = ds
             dataset_features['start_year'] = sy
             if ds == 'H5N1' and sy == 2000:
                 dataset_features['start_year'] = 2001
+            main()
             try:
                 main()
+                print('{} {} Finished'.format(ds, sy))
             except:
                 print('Error at {} {}'.format(ds, sy))
