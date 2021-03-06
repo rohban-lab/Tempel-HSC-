@@ -125,7 +125,7 @@ class Classifier:
                     optimizer.zero_grad()
 
                 # Update network parameters via backpropagation: forward + backward + optimize
-                outputs, _ = net(inputs.float(), hidden)
+                _, outputs = net(inputs.float(), hidden)
 
                 dists = torch.sqrt(torch.norm(outputs, p=2, dim=1) ** 2 + 1) - 1
 

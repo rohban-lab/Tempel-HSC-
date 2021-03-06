@@ -77,14 +77,12 @@ def main():
                                                                            dataset_features['start_year'],
                                                                            dataset_features['end_year'],
                                                                            i + 1),
-                                                                       PATHS['test'].format(dataset_features['dataset'],
-                                                                                            dataset_features[
-                                                                                                'end_year'] -
-                                                                                            dataset_features[
-                                                                                                'start_year'],
-                                                                                            dataset_features[
-                                                                                                'end_year'],
-                                                                                            i + 1))
+                                                                       PATHS['test'].format(
+                                                                           dataset_features['dataset'],
+                                                                           dataset_features['end_year'] -
+                                                                           dataset_features['start_year'],
+                                                                           dataset_features['end_year'],
+                                                                           i + 1))
 
             train_loader = DataLoader(
                 dataset=train_dataset,
