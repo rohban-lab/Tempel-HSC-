@@ -114,10 +114,4 @@ def main():
 
 
 if __name__ == '__main__':
-    datasets = ['H1N1', 'H3N2', 'H5N1']
-    start_years = [2001, 2006, 2011]
-    for ds in datasets:
-        for sy in start_years:
-            dataset_features['dataset'] = ds
-            dataset_features['start_year'] = sy
-            main()
+    main()

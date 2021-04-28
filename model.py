@@ -146,6 +146,4 @@ class Classifier:
                 thresh = self.eval(valid_loader, net)
                 self.eval(test_loader, net, thresh)
 
-        print('Finished training.')
-
         return net
