@@ -102,8 +102,7 @@ if __name__ == '__main__':
             for k, v in classifier.scores['test'].items():
                 final_res['mean'][k] = (final_res['mean'][k] * i + sum(v) / len(v)) / (i + 1)
             for k, v in classifier.scores['test'].items():
-                final_res['var'][k] = (i * (final_res['mean'][k] - sum(v) / len(v)) ** 2 + final_res['var'][k]) / (
-                        i + 1)
+                final_res['var'][k] = (i * (final_res['mean'][k] - sum(v) / len(v)) ** 2 + final_res['var'][k]) / (i + 1)
 
         df = pd.DataFrame.from_dict(final_res)
         df.to_csv(res_path + '/final.csv')

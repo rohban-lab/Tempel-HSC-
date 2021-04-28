@@ -22,7 +22,7 @@ parameters = {
     # Number of hidden units in the encoder
     'hidden_size': 128,
 
-    # Droprate (applied at input)
+    # Dropout rate (applied at input)
     'dropout_p': 0.5,
 
     # Note, no learning rate decay implemented
