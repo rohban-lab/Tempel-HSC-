@@ -13,7 +13,6 @@ parser.add_argument('--start_year', type=int, default=2001)
 parser.add_argument('--end_year', type=int, default=2016)
 parser.add_argument('--create_dataset', type=bool, default=True)
 parser.add_argument('--train', type=bool, default=True)
-parser.add_argument('--method', type=str, default='dbscan')
 args = parser.parse_args()
 
 parameters = {
@@ -45,11 +44,11 @@ dataset_features = {
 
     'end_year': args.end_year,
 
-    'method': args.method
+    'method': 'dbscan'
 }
 
 
-def main():
+if __name__ == '__main__':
     if args.create_dataset:
         for i in range(dataset_features['num_of_runs']):
             create_dataset(dataset_features['start_year'], dataset_features['end_year'], dataset_features['dataset'],
@@ -107,7 +106,3 @@ def main():
 
         np.save(res_path + '/fpr', fpr_rnn)
         np.save(res_path + '/tpr', tpr_rnn)
-
-
-if __name__ == '__main__':
-    main()

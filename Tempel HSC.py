@@ -14,7 +14,6 @@ parser.add_argument('--start_year', type=int, default=2001)
 parser.add_argument('--end_year', type=int, default=2016)
 parser.add_argument('--create_dataset', type=bool, default=True)
 parser.add_argument('--train', type=bool, default=True)
-parser.add_argument('--method', type=str, default='dbscan')
 args = parser.parse_args()
 
 parameters = {
@@ -42,7 +41,7 @@ dataset_features = {
 
     'end_year': args.end_year,
 
-    'method': args.method
+    'method': 'dbscan'
 }
 
 PATHS = {'train': './data/processed/{}_T{}_{}/{}/triplet_' + dataset_features['method'] + '_train.csv',
@@ -50,7 +49,7 @@ PATHS = {'train': './data/processed/{}_T{}_{}/{}/triplet_' + dataset_features['m
          'result': './results/Tempel-HSC/{}_T{}_{}'}
 
 
-def main():
+if __name__ == '__main__':
     if args.create_dataset:
         for i in range(dataset_features['num_of_runs']):
             create_dataset(dataset_features['start_year'], dataset_features['end_year'], dataset_features['dataset'],
@@ -113,5 +112,3 @@ def main():
         np.save(res_path + '/thresh', classifier.roc_info['thresh'])
 
 
-if __name__ == '__main__':
-    main()
