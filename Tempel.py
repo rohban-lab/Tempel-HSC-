@@ -96,7 +96,7 @@ def main():
                                                                Y_test, False)
 
             df = pd.DataFrame.from_dict(result)
-            df.to_csv(res_path + '/{}.csv'.format(i))
+            df.to_csv(res_path + '/{}.csv'.format(i + 1))
             for k, v in result.items():
                 if k not in final_res:
                     final_res[k] = [0]
@@ -110,10 +110,4 @@ def main():
 
 
 if __name__ == '__main__':
-    datasets = ['H1N1', 'H3N2', 'H5N1']
-    start_years = [2001, 2006, 2011]
-    for ds in datasets:
-        for sy in start_years:
-            dataset_features['dataset'] = ds
-            dataset_features['start_year'] = sy
-            main()
+    main()
