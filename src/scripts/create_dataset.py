@@ -30,14 +30,11 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
         'file_name': './data/processed/{}_T{}_{}/{}/triplet_'.format(dataset, end_year - start_year, end_year, num)
     }
 
-    dir = parameters['file_name'][:-11]
-    if not os.path.exists(dir):
-        os.mkdir(dir)
-    dir = parameters['file_name'][:-9]
-    if os.path.exists(dir):
+    directory = parameters['file_name'][:-9]
+    if os.path.exists(directory):
         return
     else:
-        os.mkdir(dir)
+        os.makedirs(directory)
 
     # Epitopes sites for the H1 protein
     if dataset == 'H1N1':
@@ -92,15 +89,8 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
 
     strains_by_year = make_dataset.read_strains_from(data_files, parameters['data_path'])
 
-    if not time_div:
-        train_strains_by_year, test_strains_by_year = make_dataset.train_test_split_strains(strains_by_year, test_split,
-                                                                                            parameters[
-                                                                                                'clustering_method'])
-    else:
-        train_strains_by_year, _ = make_dataset.train_test_split_strains(strains_by_year[:-1], test_split,
-                                                                         parameters['clustering_method'])
-        _, test_strains_by_year = make_dataset.train_test_split_strains(strains_by_year[1:], test_split,
-                                                                        parameters['clustering_method'])
+    train_strains_by_year, test_strains_by_year = make_dataset.train_test_split_strains(strains_by_year, test_split,
+                                                                                        parameters['clustering_method'])
 
     if parameters['clustering_method'] != 'random':
         if parameters['clustering_method'] == 'cluster':
@@ -115,15 +105,6 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
             test_strains_by_year, test_clusters_by_year = utils.cluster_years(test_strains_by_year,
                                                                               parameters['data_path'],
                                                                               parameters['clustering_method'])
-
-            # print('Train clusters over the years: ') # for i, year_clusters in enumerate(train_clusters_by_year):
-            #
-            # print('Year: {}\n{}'.format(i, year_clusters['population']))
-            # visualize.show_clusters(train_clusters_by_year, data_files, method='PCA', dims=3)
-            #
-            # print('Test clusters over the years: ')
-            # for i, year_clusters in enumerate(test_clusters_by_year):
-            #    print('Year: {}\n{}'.format(i, year_clusters['population']))
 
             train_strains_by_year = cluster.sample_from_clusters(train_strains_by_year, train_clusters_by_year,
                                                                  parameters['training_samples'])

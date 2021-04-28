@@ -2,16 +2,14 @@ import argparse
 from torch.utils.data import DataLoader
 from model import Classifier
 from src.models.models import AttentionModel
-from src.models.models import RnnModel
 from src.scripts.create_dataset import create_dataset
 from loader import load_datasets
-import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str, default='H5N1')
+parser.add_argument('--dataset', type=str, default='H1N1')
 parser.add_argument('--start_year', type=int, default=2001)
 parser.add_argument('--end_year', type=int, default=2016)
 parser.add_argument('--create_dataset', type=bool, default=True)
@@ -33,8 +31,6 @@ parameters = {
     'num_of_epochs': 50,
 
     'lr_milestones': [25],
-
-    'model': 'attention'
 }
 
 dataset_features = {
@@ -66,7 +62,7 @@ def main():
                                           dataset_features['start_year'],
                                           dataset_features['end_year'])
         if not os.path.exists(res_path):
-            os.mkdir(res_path)
+            os.makedirs(res_path)
         final_res = {'mean': {'precision': 0, 'recall': 0, 'f-score': 0, 'mcc': 0, 'accuracy': 0, 'auc': 0},
                      'var': {'precision': 0, 'recall': 0, 'f-score': 0, 'mcc': 0, 'accuracy': 0, 'auc': 0}}
         for i in range(dataset_features['num_of_runs']):
@@ -95,12 +91,8 @@ def main():
                 batch_size=parameters['batch_size'], shuffle=False, drop_last=False)
 
             seq_length = train_dataset.data.shape[0]
-            if parameters['model'] == 'attention':
-                net = AttentionModel(seq_length, parameters['input_dim'], 2, parameters['hidden_size']
-                                     , parameters['dropout_p']).float()
-            elif parameters['model'] == 'LSTM':
-                net = RnnModel(parameters['input_dim'], 2, parameters['hidden_size'], parameters['dropout_p'],
-                               cell_type='LSTM')
+            net = AttentionModel(seq_length, parameters['input_dim'], 2, parameters['hidden_size']
+                                 , parameters['dropout_p']).float()
 
             classifier = Classifier(batch_size=parameters['batch_size'], lr_milestones=parameters['lr_milestones']
                                     , n_epochs=parameters['num_of_epochs'])
@@ -120,25 +112,12 @@ def main():
         np.save(res_path + '/tpr', classifier.roc_info['tpr'])
         np.save(res_path + '/thresh', classifier.roc_info['thresh'])
 
-        plt.plot(classifier.thresh_scores['precision'], classifier.thresh_scores['thresh'])
-        plt.plot(classifier.thresh_scores['recall'], classifier.thresh_scores['thresh'])
-        plt.savefig(res_path + 'prec_rec.png')
-        plt.plot(classifier.thresh_scores['fscore'], classifier.thresh_scores['thresh'])
-        plt.savefig(res_path + 'fscore.png')
-
 
 if __name__ == '__main__':
     datasets = ['H1N1', 'H3N2', 'H5N1']
-    start_years = [2000, 2000, 2010]
+    start_years = [2001, 2006, 2011]
     for ds in datasets:
         for sy in start_years:
             dataset_features['dataset'] = ds
             dataset_features['start_year'] = sy
-            if ds == 'H5N1' and sy == 2000:
-                dataset_features['start_year'] = 2001
             main()
-            try:
-                main()
-                print('{} {} Finished'.format(ds, sy))
-            except:
-                print('Error at {} {}'.format(ds, sy))

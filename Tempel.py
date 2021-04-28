@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', type=str, default='H5N1')
+parser.add_argument('--dataset', type=str, default='H1N1')
 parser.add_argument('--start_year', type=int, default=2001)
 parser.add_argument('--end_year', type=int, default=2016)
 parser.add_argument('--create_dataset', type=bool, default=True)
@@ -19,9 +19,6 @@ args = parser.parse_args()
 parameters = {
     # Exlude _train/_test and file ending
     'data_set': '',
-
-    # 'svm', lstm', 'gru', 'attention' (only temporal) or 'da-rnn' (input and temporal attention)
-    'model': 'attention',
 
     # Number of hidden units in the encoder
     'hidden_size': 128,
@@ -64,9 +61,9 @@ def main():
                                                        dataset_features['end_year'])
 
         if not os.path.exists(res_path):
-            os.mkdir(res_path)
+            os.makedirs(res_path)
         final_res = {}
-        for i in range(5):
+        for i in range(dataset_features['num_of_runs']):
             parameters['data_set'] = './data/processed/{}_T{}_{}/{}/triplet_{}'.format(dataset_features['dataset'],
                                                                                        dataset_features['end_year'] -
                                                                                        dataset_features['start_year'],
@@ -97,7 +94,7 @@ def main():
                                                                parameters['learning_rate'],
                                                                parameters['batch_size'], X_train, Y_train, X_test,
                                                                Y_test, False)
-            print('Finished')
+
             df = pd.DataFrame.from_dict(result)
             df.to_csv(res_path + '/{}.csv'.format(i))
             for k, v in result.items():
@@ -114,14 +111,9 @@ def main():
 
 if __name__ == '__main__':
     datasets = ['H1N1', 'H3N2', 'H5N1']
-    start_years = [2000, 2005, 2010]
+    start_years = [2001, 2006, 2011]
     for ds in datasets:
         for sy in start_years:
             dataset_features['dataset'] = ds
             dataset_features['start_year'] = sy
-            if ds == 'H5N1' and sy == 2000:
-                dataset_features['start_year'] = 2001
-            try:
-                main()
-            except:
-                print('Error at {} {}'.format(ds, sy))
+            main()
