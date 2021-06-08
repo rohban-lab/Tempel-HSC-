@@ -36,6 +36,21 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
     else:
         os.makedirs(directory)
 
+    # RBD sites
+    if dataset == 'Covid':
+        positions = [332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350,
+                     351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369,
+                     370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388,
+                     389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407,
+                     408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+                     427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445,
+                     446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464,
+                     465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483,
+                     484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502,
+                     503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521,
+                     522, 523, 524, 525, 526]
+        positions.sort()
+
     # Epitopes sites for the H1 protein
     if dataset == 'H1N1':
         epitope_a = [118, 120, 121, 122, 126, 127, 128, 129, 132, 133, 134, 135, 137, 139, 140, 141, 142, 143, 146, 147,
@@ -49,8 +64,8 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
                      227, 235, 237, 239, 241, 243, 244, 245]
         epitope_e = [47, 48, 50, 51, 53, 54, 56, 57, 58, 66, 68, 69, 70, 71, 72, 73, 74, 75, 78, 79, 80, 82, 83, 84, 85,
                      86, 102, 257, 258, 259, 260, 261, 263, 267]
-        epitope_positions = epitope_a + epitope_b + epitope_c + epitope_d + epitope_e
-        epitope_positions.sort()
+        positions = epitope_a + epitope_b + epitope_c + epitope_d + epitope_e
+        positions.sort()
         # epitope_positions = [118]
 
     # Epitopes sites for the H3 subtype
@@ -64,22 +79,22 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
                      209, 212, 213, 214, 215, 216, 217, 218, 219, 226, 227, 228, 229, 230, 238, 240, 242, 244, 246, 247,
                      248]
         epitope_e = [57, 59, 62, 63, 67, 75, 78, 80, 81, 82, 83, 86, 87, 88, 91, 92, 94, 109, 260, 261, 262, 265]
-        epitope_positions = epitope_a + epitope_b + epitope_c + epitope_d + epitope_e
-        epitope_positions.sort()
+        positions = epitope_a + epitope_b + epitope_c + epitope_d + epitope_e
+        positions.sort()
 
     # Epitopes sites for the H5 protein
     if dataset == 'H5N1':
-        epitope_positions = [36, 48, 53, 55, 56, 57, 62, 65, 71, 77, 78, 80, 81, 82, 83, 84, 86, 87, 91, 94, 115, 116,
-                             117, 118, 119,
-                             120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 133, 136, 138, 140, 141, 142,
-                             143, 144, 145,
-                             149, 150, 151, 152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 165, 166, 167,
-                             168, 169, 171,
-                             172, 173, 174, 179, 182, 185, 186, 187, 189, 190, 191, 193, 200, 205, 206, 207, 212, 222,
-                             226, 230, 242,
-                             244, 245, 246, 252, 256, 259, 261, 262, 263, 273, 274, 276, 278, 282]
+        positions = [36, 48, 53, 55, 56, 57, 62, 65, 71, 77, 78, 80, 81, 82, 83, 84, 86, 87, 91, 94, 115, 116,
+                     117, 118, 119,
+                     120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 133, 136, 138, 140, 141, 142,
+                     143, 144, 145,
+                     149, 150, 151, 152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 165, 166, 167,
+                     168, 169, 171,
+                     172, 173, 174, 179, 182, 185, 186, 187, 189, 190, 191, 193, 200, 205, 206, 207, 212, 222,
+                     226, 230, 242,
+                     244, 245, 246, 252, 256, 259, 261, 262, 263, 273, 274, 276, 278, 282]
         # epitope_positions = np.unique(epitope_positions)
-        epitope_positions.sort()
+        positions.sort()
 
     years = list(range(parameters['start_year'], parameters['end_year'] + 1))
     data_files = list(map(lambda x: str(x) + '.csv', years))
@@ -115,9 +130,9 @@ def create_dataset(start_year, end_year, dataset, num, method='cluster', time_di
         train_strains_by_year = build_features.sample_strains(train_strains_by_year, parameters['training_samples'])
         test_strains_by_year = build_features.sample_strains(test_strains_by_year, parameters['testing_samples'])
 
-    create_triplet_trigram_dataset(train_strains_by_year, trigram_to_idx, epitope_positions,
+    create_triplet_trigram_dataset(train_strains_by_year, trigram_to_idx, positions,
                                    file_name=(parameters['file_name'] + parameters['clustering_method'] + '_train'))
-    create_triplet_trigram_dataset(test_strains_by_year, trigram_to_idx, epitope_positions,
+    create_triplet_trigram_dataset(test_strains_by_year, trigram_to_idx, positions,
                                    file_name=(parameters['file_name'] + parameters['clustering_method'] + '_test'))
 
 
