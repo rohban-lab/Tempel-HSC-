@@ -2,8 +2,6 @@ import torch
 import torch.optim as optim
 from sklearn.metrics import roc_curve, auc
 import numpy as np
-
-from src.models.train_model import repackage_hidden
 from src.utils import validation
 
 
@@ -44,14 +42,13 @@ class Classifier:
         with torch.no_grad():
             for data in test_loader:
                 inputs, labels, semi_targets, idx = data
-                inputs = inputs.permute(1, 0, 2)
 
-                _, outputs = net(inputs.float(), net.init_hidden(inputs.shape[1]))
+                outputs = net(inputs.cuda())
 
                 dists = torch.sqrt(torch.norm(outputs, p=2, dim=1) ** 2 + 1) - 1
 
                 scores = 1 - torch.exp(-dists)
-                losses = torch.where(semi_targets == 0, dists, -torch.log(scores + self.eps))
+                losses = torch.where(semi_targets.cuda() == 0, dists, -torch.log(scores + self.eps))
                 loss = torch.mean(losses)
 
                 # Save triple of (idx, label, score) in a list
@@ -59,7 +56,7 @@ class Classifier:
                                             labels.cpu().data.numpy().tolist(),
                                             scores.flatten().cpu().data.numpy().tolist()))
 
-                epoch_loss += loss.item()
+                epoch_loss += loss.cpu().item()
                 n_batches += 1
 
         _, labels, scores = zip(*idx_label_score)
@@ -112,36 +109,33 @@ class Classifier:
 
             epoch_loss = 0.0
             n_batches = 0
-            hidden = net.init_hidden(self.batch_size)
 
             for data in train_loader:
                 inputs, labels, semi_targets, idx = data
-                inputs = inputs.permute(1, 0, 2)
-                repackage_hidden(hidden)
 
                 # Zero the network parameter gradients
                 if epoch < self.n_epochs:
                     optimizer.zero_grad()
 
                 # Update network parameters via backpropagation: forward + backward + optimize
-                _, outputs = net(inputs.float(), hidden)
+                outputs = net(inputs.cuda())
 
                 dists = torch.sqrt(torch.norm(outputs, p=2, dim=1) ** 2 + 1) - 1
 
                 scores = 1 - torch.exp(-dists)
-                losses = torch.where(semi_targets == 0, dists, -torch.log(scores + self.eps))
+                losses = torch.where(semi_targets.cuda() == 0, dists, -torch.log(scores + self.eps))
                 loss = torch.mean(losses)
 
                 loss.backward()
                 optimizer.step()
 
-                epoch_loss += loss.item()
+                epoch_loss += loss.cpu().item()
                 n_batches += 1
 
             # Take learning rate scheduler step
             scheduler.step()
 
-            if self.n_epochs - epoch <= 10:
+            if self.n_epochs - epoch <= 5:
                 thresh = self.eval(valid_loader, net)
                 self.eval(test_loader, net, thresh)
 
